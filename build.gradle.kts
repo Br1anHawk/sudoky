@@ -16,6 +16,7 @@ repositories {
 dependencies {
     implementation("org.openpnp:opencv:4.5.1-2")
     implementation("net.sourceforge.tess4j:tess4j:5.1.1")
+    implementation("technology.tabula:tabula:1.0.5")
     //testImplementation("org.apache.logging.log4j:log4j-slf4j-impl:2.17.1")
 }
 
