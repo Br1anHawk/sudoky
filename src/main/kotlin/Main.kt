@@ -1,8 +1,10 @@
+import java.awt.FileDialog
 import java.io.File
 import java.io.FileReader
 import java.io.StringWriter
 import javax.script.ScriptEngineManager
 import javax.script.SimpleScriptContext
+import javax.swing.JFrame
 
 
 fun main(args: Array<String>) {
@@ -13,7 +15,17 @@ fun main(args: Array<String>) {
 //        intArrayOf(0, 1, 2, 3)
 //    )
 
-    val table = DetectSudokuTable.detectFromImage("S:\\programming\\2022-03-30 (3).jpg")
+    //val fileImagePath = "S:\\programming\\2022-03-30 (3).jpg"
+    var fileImagePath = ""
+    val fileDialog = FileDialog(JFrame())
+    fileDialog.isVisible = true
+    //val fileImagePath = "Этот компьютер\\POCO M3\\Внутренний общий накопитель\\DCIM\\Screenshots\\Screenshot_2022-04-02-15-45-56-727_easy.sudoku.puzzle.solver.free.jpg"
+    val files = fileDialog.files
+    if (files.isNotEmpty()) {
+        fileImagePath = files[0].absolutePath
+    }
+
+    val table = DetectSudokuTable.detectFromImage(fileImagePath)
     val sudoky = Sudoky(table)
     sudoky.resolve()
     sudoky.printMainTableInConsole()

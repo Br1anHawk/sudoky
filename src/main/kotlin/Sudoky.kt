@@ -75,7 +75,9 @@ class Sudoky(
 
     fun printMainTableInConsole() {
         for (i in 0 until mainTable.size) {
+            if (i % SIDE_OF_SQUARE_SIZE == 0) println()
             for(j in 0 until mainTable[i].size) {
+                if (j % SIDE_OF_SQUARE_SIZE == 0) print(" ")
                 print(mainTable[i][j].value)
                 print(" ")
             }

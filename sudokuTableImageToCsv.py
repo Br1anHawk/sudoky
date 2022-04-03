@@ -79,7 +79,7 @@ def sudokuTableImageToCsv(script, fileImagePath, tesseractCmdPath = tesseractCmd
     for cnt in contours:
         x, y, w, h = cv2.boundingRect(cnt)
         if abs(w - h) < 1:
-            # cv2.rectangle(im, (x, y), (x + w, y + h), (0, 0, 255), 1)
+            cv2.rectangle(imageForEdit, (x, y), (x + w, y + h), (0, 0, 255), 1)
             rectInt = Rect(x, y, w, h)
             if len(rectangles) > 0:
                 if isIn(rectangles[len(rectangles) - 1], rectInt):
@@ -119,8 +119,8 @@ def sudokuTableImageToCsv(script, fileImagePath, tesseractCmdPath = tesseractCmd
                     j = tableSize - 1
                     i -= 1
     writeTableInCsvFile(csvFilePath, csvFileName, table)
-    # cv2.namedWindow('detecttable', cv2.WINDOW_NORMAL)
-    # cv2.imwrite('detecttable.jpg', imageForEdit)
+    cv2.namedWindow('detecttable', cv2.WINDOW_NORMAL)
+    cv2.imwrite('detecttable.jpg', imageForEdit)
 
 
 if __name__ == '__main__':
