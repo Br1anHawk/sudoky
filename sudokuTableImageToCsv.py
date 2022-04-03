@@ -2,12 +2,12 @@ import cv2
 import numpy as np
 import pytesseract
 import csv
+import sys
 
-
-filePath = r'st.jpg'
+# filePath = r'st.jpg'
 tesseractCmdPath = r'C:\Program Files (x86)\Tesseract-OCR\tesseract.exe'
 csvFilePath = r''
-csvFileName = "csv"
+csvFileName = "csv.csv"
 
 EMPTY_CELL = 0
 
@@ -40,7 +40,8 @@ def getTable(m, n):
 def writeTableInCsvFile(csvFilePath, csvFileName, table):
     csvFile = open(csvFilePath + csvFileName, 'w')
     writer = csv.writer(csvFile)
-    writer.writerow(table)
+    for row in table:
+        writer.writerow(row)
 
 
 class Rect:
@@ -51,11 +52,12 @@ class Rect:
         self.h = h
         self.cells = []
 
-def sudokuTableImageToCsv(filePath, tesseractCmdPath):
 
+def sudokuTableImageToCsv(script, fileImagePath, tesseractCmdPath = tesseractCmdPath, csvFilePath = csvFilePath,
+                          csvFileName = csvFileName):
     pytesseract.pytesseract.tesseract_cmd = tesseractCmdPath
-    imageForEdit = cv2.imread(filePath)
-    image = cv2.imread(filePath, 0)
+    imageForEdit = cv2.imread(fileImagePath)
+    image = cv2.imread(fileImagePath, 0)
     img = np.array(image)
     thresh, img_bin = cv2.threshold(img, 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
     img_bin = 255 - img_bin
@@ -121,4 +123,4 @@ def sudokuTableImageToCsv(filePath, tesseractCmdPath):
 
 
 if __name__ == '__main__':
-    sudokuTableImageToCsv(filePath, tesseractCmdPath)
+    sudokuTableImageToCsv(*sys.argv)
