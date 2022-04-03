@@ -1,3 +1,4 @@
+import com.github.doyaaaaaken.kotlincsv.dsl.csvReader
 import org.apache.pdfbox.pdmodel.PDDocument
 import technology.tabula.ObjectExtractor
 import technology.tabula.extractors.SpreadsheetExtractionAlgorithm
@@ -32,6 +33,23 @@ class DetectSudokuTable {
                 array.add(IntArray(size))
             }
             return array.toTypedArray()
+        }
+
+        fun detectFromImage(fileImagePath: String): Array<IntArray> {
+            val array = arrayOf(intArrayOf())
+            val process = ProcessBuilder()
+            val pyScriptPath = File(".").canonicalPath + "\\" + "sudokuTableImageToCsv.py "
+            process.command("python " , pyScriptPath, fileImagePath)
+            val runningProcess = process.start()
+            val exitCode = runningProcess.waitFor()
+            csvReader().open(fileImagePath) {
+                readAllAsSequence().forEach { row ->
+                    row.forEach { cell ->
+                        print(cell)
+                    }
+                }
+            }
+            return array
         }
     }
 }

@@ -13,10 +13,10 @@ fun main(args: Array<String>) {
 //        intArrayOf(0, 1, 2, 3)
 //    )
 
-//    val table = DetectSudokuTable.detect("S:\\programming\\sudoku_test_1.pdf")
-//    val sudoky = Sudoky(table)
-//    sudoky.resolve()
-//    sudoky.printMainTableInConsole()
+    val table = DetectSudokuTable.detectFromImage("S:\\programming\\sudoku_test.png")
+    val sudoky = Sudoky(table)
+    sudoky.resolve()
+    sudoky.printMainTableInConsole()
 
 
 //    OpenCV.loadShared()
@@ -31,10 +31,11 @@ fun main(args: Array<String>) {
 //    val result = tesseract.doOCR(File("S:\\programming\\sudoku_test.png"))
 //    println(result)
 
-    val writer = StringWriter()
-    val context = SimpleScriptContext()
-    context.setWriter(writer)
-    val manager = ScriptEngineManager()
-    val engine = manager.getEngineByName("python")
-    engine.eval(FileReader("tabular_image-to-csv.py"), context)
+//    val writer = StringWriter()
+//    val context = SimpleScriptContext()
+//    context.setWriter(writer)
+//    val manager = ScriptEngineManager()
+//    val engine = manager.getEngineByName("python")
+//    val fr = FileReader("sudokuTableImageToCsv.py")
+//    engine.eval(fr, context)
 }
