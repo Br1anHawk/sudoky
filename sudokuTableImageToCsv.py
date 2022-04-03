@@ -38,10 +38,11 @@ def getTable(m, n):
 
 
 def writeTableInCsvFile(csvFilePath, csvFileName, table):
-    csvFile = open(csvFilePath + csvFileName, 'w')
+    csvFile = open(csvFilePath + csvFileName, 'w', newline='')
     writer = csv.writer(csvFile)
-    for row in table:
-        writer.writerow(row)
+    writer.writerows(table)
+    # for row in table:
+    #     writer.writerow(row)
 
 
 class Rect:

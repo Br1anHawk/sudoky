@@ -28,7 +28,7 @@ class DetectSudokuTable {
         }
 
         private fun initArray(size: Int): Array<IntArray> {
-            val array = ArrayList<IntArray>(size)
+            val array = ArrayList<IntArray>()
             for (i in 1..size) {
                 array.add(IntArray(size))
             }
@@ -36,17 +36,24 @@ class DetectSudokuTable {
         }
 
         fun detectFromImage(fileImagePath: String): Array<IntArray> {
-            val array = arrayOf(intArrayOf())
+            val tesseractCmdPath = "C:\\Program Files (x86)\\Tesseract-OCR\\tesseract.exe"
+            val csvFilePath = ""
+            val csvFileName = "csv.csv"
+            val array = initArray(9)
             val process = ProcessBuilder()
             val pyScriptPath = File(".").canonicalPath + "\\" + "sudokuTableImageToCsv.py "
-            process.command("python " , pyScriptPath, fileImagePath)
+            process.command("python " , pyScriptPath, fileImagePath, tesseractCmdPath, csvFilePath, csvFileName)
             val runningProcess = process.start()
             val exitCode = runningProcess.waitFor()
-            csvReader().open(fileImagePath) {
+            csvReader().open(csvFilePath + csvFileName) {
+                var i = 0
+                var j = 0
                 readAllAsSequence().forEach { row ->
                     row.forEach { cell ->
-                        print(cell)
+                        array[i][j++] = cell.toInt()
                     }
+                    i++
+                    j = 0
                 }
             }
             return array

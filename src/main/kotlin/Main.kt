@@ -13,7 +13,7 @@ fun main(args: Array<String>) {
 //        intArrayOf(0, 1, 2, 3)
 //    )
 
-    val table = DetectSudokuTable.detectFromImage("S:\\programming\\sudoku_test.png")
+    val table = DetectSudokuTable.detectFromImage("S:\\programming\\2022-03-30 (3).jpg")
     val sudoky = Sudoky(table)
     sudoky.resolve()
     sudoky.printMainTableInConsole()
