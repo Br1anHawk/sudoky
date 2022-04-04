@@ -67,9 +67,9 @@ class Sudoky(
             cell.options.addAll(options)
         }
 
-        val associatives = Associatives(SIDE_OF_SQUARE_SIZE, cellsToFill)
+        val associatives = Associatives(SIDE_OF_SQUARE_SIZE, cellsToFill, mainTable)
         associatives.check()
-        associatives.fillTable(mainTable)
+        //associatives.fillTable(mainTable)
         //while (checkForOneAvailableOptionInCell()) {}
     }
 

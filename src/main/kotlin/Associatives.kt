@@ -1,6 +1,7 @@
 class Associatives (
     val sideOfSquareSize: Int,
-    val cellsToFill: ArrayList<Cell>
+    val cellsToFill: ArrayList<Cell>,
+    val mainTable: ArrayList<ArrayList<Cell>>
 ) {
     private val size = sideOfSquareSize * sideOfSquareSize
     private val associativeTables = arrayListOf<AssociativeTable>()
@@ -8,7 +9,7 @@ class Associatives (
 
     init {
         for (id in 1.. size) {
-            associativeTables.add(AssociativeTable(id, sideOfSquareSize))
+            associativeTables.add(AssociativeTable(id, sideOfSquareSize, mainTable))
         }
 
         cellsToFill.forEach { cell ->

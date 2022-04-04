@@ -15,7 +15,9 @@ fun main(args: Array<String>) {
 //        intArrayOf(0, 1, 2, 3)
 //    )
 
-    //val fileImagePath = "S:\\programming\\2022-03-30 (3).jpg"
+
+    //val fileImagePath = "S:\\programming\\sudokuImages\\st.jpg"
+
     var fileImagePath = ""
     val jFrameContainer = JFrame()
     val fileDialog = FileDialog(jFrameContainer)
@@ -25,6 +27,7 @@ fun main(args: Array<String>) {
     if (files.isNotEmpty()) {
         fileImagePath = files[0].absolutePath
     }
+    fileDialog.dispose()
     jFrameContainer.dispose()
 
     val table = DetectSudokuTable.detectFromImage(fileImagePath)

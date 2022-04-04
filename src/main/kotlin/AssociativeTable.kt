@@ -1,6 +1,7 @@
 class AssociativeTable(
     val id: Int,
-    val sideOfSquareSize: Int
+    val sideOfSquareSize: Int,
+    val mainTable: ArrayList<ArrayList<Cell>>
 ) {
     private val size = sideOfSquareSize * sideOfSquareSize
     private val table = arrayListOf<BooleanArray>()
@@ -33,13 +34,17 @@ class AssociativeTable(
         for (i in 0 until sideOfSquareSize) {
             for (j in 0 until sideOfSquareSize) {
                 table[i0 + i][j0 + j] = false
+                mainTable[i0 + i][j0 + j].options.remove(id)
             }
         }
         for (k in 0 until size) {
             table[cellI][k] = false
+            mainTable[cellI][k].options.remove(id)
             table[k][cellJ] = false
+            mainTable[k][cellJ].options.remove(id)
         }
         table[cellI][cellJ] = true
+        mainTable[cellI][cellJ].value = id
         availableSquaresForChecking.remove(Square(Position(i0, j0)))
         availableColumnsForChecking.remove(cellJ)
         availableRowsForChecking.remove(cellI)
@@ -81,13 +86,19 @@ class AssociativeTable(
                         for (j in 0 until sideOfSquareSize) {
                             table[square.position.i + i][square.position.j + j] =
                                 false
+                            mainTable[square.position.i + i][square.position.j + j]
+                                .options
+                                .remove(id)
                         }
                     }
                     for (k in 0 until size) {
                         table[position.i][k] = false
+                        mainTable[position.i][k].options.remove(id)
                         table[k][position.j] = false
+                        mainTable[k][position.j].options.remove(id)
                     }
                     table[position.i][position.j] = true
+                    mainTable[position.i][position.j].value = id
                     forRemoving.addSquare(square)
                     forRemoving.addColumn(position.j)
                     forRemoving.addRow(position.i)
@@ -117,13 +128,17 @@ class AssociativeTable(
                     for (i in 0 until sideOfSquareSize) {
                         for (j in 0 until sideOfSquareSize) {
                             table[i0 + i][j0 + j] = false
+                            mainTable[i0 + i][j0 + j].options.remove(id)
                         }
                     }
                     for (k in 0 until size) {
                         table[position][k] = false
+                        mainTable[position][k].options.remove(id)
                         table[k][position] = false
+                        mainTable[k][position].options.remove(id)
                     }
                     table[position][column] = true
+                    mainTable[position][column].value = id
                     forRemoving.addSquare(Square(Position(i0, j0)))
                     forRemoving.addColumn(column)
                     forRemoving.addRow(position)
@@ -153,13 +168,17 @@ class AssociativeTable(
                     for (i in 0 until sideOfSquareSize) {
                         for (j in 0 until sideOfSquareSize) {
                             table[i0 + i][j0 + j] = false
+                            mainTable[i0 + i][j0 + j].options.remove(id)
                         }
                     }
                     for (k in 0 until size) {
                         table[position][k] = false
+                        mainTable[position][k].options.remove(id)
                         table[k][position] = false
+                        mainTable[k][position].options.remove(id)
                     }
                     table[row][position] = true
+                    mainTable[row][position].value = id
                     forRemoving.addSquare(Square(Position(i0, j0)))
                     forRemoving.addColumn(position)
                     forRemoving.addRow(row)
