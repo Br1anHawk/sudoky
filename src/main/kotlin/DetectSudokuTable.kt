@@ -37,11 +37,11 @@ class DetectSudokuTable {
 
         fun detectFromImage(fileImagePath: String): Array<IntArray> {
             val tesseractCmdPath = "C:\\Program Files (x86)\\Tesseract-OCR\\tesseract.exe"
-            val csvFilePath = ""
-            val csvFileName = "csv.csv"
+            val csvFilePath = "bin\\temp\\"
+            val csvFileName = "tempTable.csv"
             val array = initArray(9)
             val process = ProcessBuilder()
-            val pyScriptPath = File(".").canonicalPath + "\\" + "sudokuTableImageToCsv.py "
+            val pyScriptPath = File(".").canonicalPath + "\\bin\\scripts\\" + "sudokuTableImageToCsv.py "
             process.command("python " , pyScriptPath, fileImagePath, tesseractCmdPath, csvFilePath, csvFileName)
             val runningProcess = process.start()
             val exitCode = runningProcess.waitFor()

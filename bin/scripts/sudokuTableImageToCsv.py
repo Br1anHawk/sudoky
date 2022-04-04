@@ -4,10 +4,12 @@ import pytesseract
 import csv
 import sys
 
-# filePath = r'st.jpg'
+filePath = r'S:\programming\st.jpg'
 tesseractCmdPath = r'C:\Program Files (x86)\Tesseract-OCR\tesseract.exe'
 csvFilePath = r''
 csvFileName = "csv.csv"
+TABLE_WIDTH_SIZE = 9
+TABLE_HEIGHT_SIZE = 9
 
 EMPTY_CELL = 0
 
@@ -37,12 +39,49 @@ def getTable(m, n):
     return table
 
 
+def traversalTreeOfRectangles(rectangle, table, imageForEdit):
+    cells = rectangle.cells
+    if len(cells) == 0:
+        return
+    m = len(table)
+    n = len(table[0])
+    if len(cells) == m * n:
+        i = m - 1
+        j = n - 1
+        for cell in rectangle.cells:
+            croppedCell = imageForEdit[cell.y:(cell.y + cell.h), cell.x:(cell.x + cell.w)]
+
+            hsv = cv2.cvtColor(croppedCell, cv2.COLOR_BGR2HSV)
+            msk = cv2.inRange(hsv, np.array([0, 0, 175]), np.array([179, 255, 255]))
+            krn = cv2.getStructuringElement(cv2.MORPH_RECT, (5, 3))
+            dlt = cv2.dilate(msk, krn, iterations=1)
+            thr = 255 - cv2.bitwise_and(dlt, msk)
+
+            custom_oem_psm_config = r' --psm 10 -l rus'
+            numberStr = pytesseract.image_to_string(thr, config=custom_oem_psm_config)
+            numberStr = checkTesseractDetectionErrors(numberStr)
+            try:
+                number = int(numberStr)
+                if number > 9:
+                    number = EMPTY_CELL
+            except ValueError as valErr:
+                number = EMPTY_CELL
+            # print(number)
+            table[i][j] = number
+            j -= 1
+            if j == -1:
+                j = n - 1
+                i -= 1
+    for cell in cells:
+        traversalTreeOfRectangles(cell, table, imageForEdit)
+
+
 def writeTableInCsvFile(csvFilePath, csvFileName, table):
     csvFile = open(csvFilePath + csvFileName, 'w', newline='')
     writer = csv.writer(csvFile)
     writer.writerows(table)
     # for row in table:
-    #     writer.writerow(row)
+    # writer.writerow(row)
 
 
 class Rect:
@@ -54,15 +93,15 @@ class Rect:
         self.cells = []
 
 
-def sudokuTableImageToCsv(script, fileImagePath, tesseractCmdPath = tesseractCmdPath, csvFilePath = csvFilePath,
-                          csvFileName = csvFileName):
+def sudokuTableImageToCsv(script, fileImagePath, tesseractCmdPath=tesseractCmdPath, csvFilePath=csvFilePath,
+                          csvFileName=csvFileName):
     pytesseract.pytesseract.tesseract_cmd = tesseractCmdPath
     imageForEdit = cv2.imread(fileImagePath)
     image = cv2.imread(fileImagePath, 0)
     img = np.array(image)
     thresh, img_bin = cv2.threshold(img, 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
     img_bin = 255 - img_bin
-    kernel_len = np.array(img).shape[1] // 100
+    kernel_len = np.array(img).shape[1] // 50
     ver_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (1, kernel_len))
     hor_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (kernel_len, 1))
     kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (7, 7))
@@ -75,53 +114,27 @@ def sudokuTableImageToCsv(script, fileImagePath, tesseractCmdPath = tesseractCmd
     _, img_vh = cv2.threshold(img_vh, 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
     dilated_value = cv2.dilate(img_vh, kernel, iterations=1)
     contours, hierarchy = cv2.findContours(dilated_value, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-    rectangles = []
+    mainRectangle = Rect(0, 0, img.shape[1], img.shape[0])
     for cnt in contours:
         x, y, w, h = cv2.boundingRect(cnt)
-        if abs(w - h) < 1:
+        if abs(w - h) < 5:
             cv2.rectangle(imageForEdit, (x, y), (x + w, y + h), (0, 0, 255), 1)
             rectInt = Rect(x, y, w, h)
-            if len(rectangles) > 0:
-                if isIn(rectangles[len(rectangles) - 1], rectInt):
-                    rectangles[len(rectangles) - 1].cells.append(rectInt)
+            if len(mainRectangle.cells) > 0:
+                if isIn(mainRectangle.cells[len(mainRectangle.cells) - 1], rectInt):
+                    mainRectangle.cells[len(mainRectangle.cells) - 1].cells.append(rectInt)
                 else:
-                    rectangles.append(rectInt)
+                    mainRectangle.cells.append(rectInt)
             else:
-                rectangles.append(rectInt)
-    tableSize = 9
-    table = getTable(tableSize, tableSize)
-    for rectangle in rectangles:
-        if len(rectangle.cells) == tableSize * tableSize:
-            i = tableSize - 1
-            j = tableSize - 1
-            for cell in rectangle.cells:
-                croppedCell = imageForEdit[cell.y:(cell.y + cell.h), cell.x:(cell.x + cell.w)]
+                mainRectangle.cells.append(rectInt)
+    table = getTable(TABLE_WIDTH_SIZE, TABLE_HEIGHT_SIZE)
+    traversalTreeOfRectangles(mainRectangle, table, imageForEdit)
 
-                hsv = cv2.cvtColor(croppedCell, cv2.COLOR_BGR2HSV)
-                msk = cv2.inRange(hsv, np.array([0, 0, 175]), np.array([179, 255, 255]))
-                krn = cv2.getStructuringElement(cv2.MORPH_RECT, (5, 3))
-                dlt = cv2.dilate(msk, krn, iterations=1)
-                thr = 255 - cv2.bitwise_and(dlt, msk)
-
-                custom_oem_psm_config = r' --psm 10 -l rus'
-                numberStr = pytesseract.image_to_string(thr, config=custom_oem_psm_config)
-                numberStr = checkTesseractDetectionErrors(numberStr)
-                try:
-                    number = int(numberStr)
-                    if number > 9:
-                        number = EMPTY_CELL
-                except ValueError as valErr:
-                    number = EMPTY_CELL
-                # print(number)
-                table[i][j] = number
-                j -= 1
-                if j == -1:
-                    j = tableSize - 1
-                    i -= 1
     writeTableInCsvFile(csvFilePath, csvFileName, table)
     cv2.namedWindow('detecttable', cv2.WINDOW_NORMAL)
-    cv2.imwrite('detecttable.jpg', imageForEdit)
+    cv2.imwrite(csvFilePath + "detecttable.jpg", imageForEdit)
 
 
 if __name__ == '__main__':
+    # sudokuTableImageToCsv(r'sudokuTableImageToCsv.py', filePath)
     sudokuTableImageToCsv(*sys.argv)
