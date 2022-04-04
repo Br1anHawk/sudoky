@@ -17,13 +17,15 @@ fun main(args: Array<String>) {
 
     //val fileImagePath = "S:\\programming\\2022-03-30 (3).jpg"
     var fileImagePath = ""
-    val fileDialog = FileDialog(JFrame())
+    val jFrameContainer = JFrame()
+    val fileDialog = FileDialog(jFrameContainer)
     fileDialog.isVisible = true
     //val fileImagePath = "Этот компьютер\\POCO M3\\Внутренний общий накопитель\\DCIM\\Screenshots\\Screenshot_2022-04-02-15-45-56-727_easy.sudoku.puzzle.solver.free.jpg"
     val files = fileDialog.files
     if (files.isNotEmpty()) {
         fileImagePath = files[0].absolutePath
     }
+    jFrameContainer.dispose()
 
     val table = DetectSudokuTable.detectFromImage(fileImagePath)
     val sudoky = Sudoky(table)
