@@ -3,5 +3,6 @@ data class Cell (
     val i: Int,
     val j: Int,
     var value: Int,
-    val options: ArrayList<Int> = arrayListOf()
+    val options: ArrayList<Int> = arrayListOf(),
+    var status: Status = Status.FILLED
 )

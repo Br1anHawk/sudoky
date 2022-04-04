@@ -1,10 +1,11 @@
-import java.util.LinkedList
-import java.util.Queue
+import java.io.BufferedWriter
+import java.io.FileWriter
 import kotlin.math.sqrt
 
 class Sudoky(
     val table: Array<IntArray>
 ) {
+    private val EMPTY_CELL = 0
     private val SIZE = table.size
     private val SIDE_OF_SQUARE_SIZE = sqrt(SIZE.toDouble()).toInt()
     private val mainTable = arrayListOf<ArrayList<Cell>>()
@@ -18,7 +19,8 @@ class Sudoky(
         for (i in 0 until table.size) {
             for (j in 0 until table[i].size) {
                 mainTable[i].add(Cell(i, j, table[i][j]))
-                if (table[i][j] == 0) {
+                if (table[i][j] == EMPTY_CELL) {
+                    mainTable[i][j].status = Status.EMPTY
                     cellsToFill.add(mainTable[i][j])
                 }
             }
@@ -71,6 +73,53 @@ class Sudoky(
         associatives.check()
         //associatives.fillTable(mainTable)
         //while (checkForOneAvailableOptionInCell()) {}
+    }
+
+    fun writeSolutionTableToHtmlFile(filePath: String, fileName: String) {
+        val padding = "20px"
+        val htmlString = StringBuilder()
+        htmlString.append("<html>")
+        htmlString.append("<body>")
+        htmlString.append("<table style = 'font-size: 60px' border = '0'>")
+        htmlString.append("<tbody>")
+        for (i in mainTable.indices) {
+             if (i % SIDE_OF_SQUARE_SIZE == 0) {
+                    htmlString.append("<tr>")
+                    htmlString.append("<td colspan = '${SIZE + SIDE_OF_SQUARE_SIZE}'>")
+                    htmlString.append("<p style = 'padding-bottom: $padding'>")
+                    htmlString.append("</p>")
+                    htmlString.append("</td>")
+                    htmlString.append("</tr>")
+            }
+            htmlString.append("<tr>")
+            for (j in mainTable[i].indices) {
+                if (j % SIDE_OF_SQUARE_SIZE == 0) {
+                    htmlString.append("<td>")
+                    htmlString.append("<p style = 'padding-left: $padding'>")
+                    htmlString.append("</p>")
+                    htmlString.append("</td>")
+                }
+                htmlString.append("<td>")
+                if (mainTable[i][j].status == Status.EMPTY) {
+                    htmlString.append("<p style = 'color:red'>")
+                } else {
+                    htmlString.append("<p>")
+                }
+                htmlString.append(mainTable[i][j].value)
+                htmlString.append("</p>")
+                htmlString.append("</td>")
+            }
+            htmlString.append("</tr>")
+        }
+        htmlString.append("</tbody>")
+        htmlString.append("</table>")
+        htmlString.append("</body>")
+        htmlString.append("</html>")
+
+        val bufferedWriter = BufferedWriter(FileWriter(filePath + fileName))
+        bufferedWriter.write(htmlString.toString())
+        bufferedWriter.flush()
+        bufferedWriter.close()
     }
 
     fun printMainTableInConsole() {

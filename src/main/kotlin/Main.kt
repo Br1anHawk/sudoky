@@ -1,9 +1,4 @@
 import java.awt.FileDialog
-import java.io.File
-import java.io.FileReader
-import java.io.StringWriter
-import javax.script.ScriptEngineManager
-import javax.script.SimpleScriptContext
 import javax.swing.JFrame
 
 
@@ -17,6 +12,9 @@ fun main(args: Array<String>) {
 
 
     //val fileImagePath = "S:\\programming\\sudokuImages\\st.jpg"
+
+    val fileSolutionHtmlPath = "bin\\"
+    val fileSolutionHtmlName = "solution.html"
 
     var fileImagePath = ""
     val jFrameContainer = JFrame()
@@ -33,7 +31,10 @@ fun main(args: Array<String>) {
     val table = DetectSudokuTable.detectFromImage(fileImagePath)
     val sudoky = Sudoky(table)
     sudoky.resolve()
+    sudoky.writeSolutionTableToHtmlFile(fileSolutionHtmlPath, fileSolutionHtmlName)
     sudoky.printMainTableInConsole()
+
+
 
 
 //    OpenCV.loadShared()
