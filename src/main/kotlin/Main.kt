@@ -11,7 +11,7 @@ fun main(args: Array<String>) {
 //    )
 
 
-    //val fileImagePath = "S:\\programming\\sudokuImages\\st.jpg"
+//    val fileImagePath = "S:\\programming\\sudokuImages\\test2.jpg"
 
     val fileSolutionHtmlPath = "bin\\"
     val fileSolutionHtmlName = "solution.html"

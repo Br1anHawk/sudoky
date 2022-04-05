@@ -50,12 +50,15 @@ class AssociativeTable(
         availableRowsForChecking.remove(cellI)
     }
 
-    fun checkForAvailableOptions(): Boolean {
+    fun checkForAvailableOptions(associativeTables: ArrayList<AssociativeTable>): Boolean {
         var isFound = false
         do {
-            val isFoundAvailableOptionsInSquares = checkForOneAvailableOptionInSquare()
-            val isFoundAvailableOptionsInColumns = checkForOneAvailableOptionInColumns()
-            val isFoundAvailableOptionsInRows = checkForOneAvailableOptionInRows()
+            val isFoundAvailableOptionsInSquares = checkForOneAvailableOptionInSquare(associativeTables)
+            //Sudoky.writeMainTable(mainTable, "squares")
+            val isFoundAvailableOptionsInColumns = checkForOneAvailableOptionInColumns(associativeTables)
+            //Sudoky.writeMainTable(mainTable, "columns")
+            val isFoundAvailableOptionsInRows = checkForOneAvailableOptionInRows(associativeTables)
+            //Sudoky.writeMainTable(mainTable, "rows")
             if (isFoundAvailableOptionsInSquares || isFoundAvailableOptionsInColumns || isFoundAvailableOptionsInRows) {
                 isFound = true
             }
@@ -63,7 +66,7 @@ class AssociativeTable(
         return isFound
     }
 
-    private fun checkForOneAvailableOptionInSquare(): Boolean {
+    private fun checkForOneAvailableOptionInSquare(associativeTables: ArrayList<AssociativeTable>): Boolean {
         var isFound = false
         do {
             removeFoundSquaresColumnsRows()
@@ -99,6 +102,7 @@ class AssociativeTable(
                     }
                     table[position.i][position.j] = true
                     mainTable[position.i][position.j].value = id
+                    excludeCellFromOtherAssociativeTables(associativeTables, mainTable[position.i][position.j])
                     forRemoving.addSquare(square)
                     forRemoving.addColumn(position.j)
                     forRemoving.addRow(position.i)
@@ -109,7 +113,7 @@ class AssociativeTable(
         return isFound
     }
 
-    private fun checkForOneAvailableOptionInColumns(): Boolean {
+    private fun checkForOneAvailableOptionInColumns(associativeTables: ArrayList<AssociativeTable>): Boolean {
         var isFound = false
         do {
             removeFoundSquaresColumnsRows()
@@ -134,11 +138,12 @@ class AssociativeTable(
                     for (k in 0 until size) {
                         table[position][k] = false
                         mainTable[position][k].options.remove(id)
-                        table[k][position] = false
-                        mainTable[k][position].options.remove(id)
+                        table[k][column] = false
+                        mainTable[k][column].options.remove(id)
                     }
                     table[position][column] = true
                     mainTable[position][column].value = id
+                    excludeCellFromOtherAssociativeTables(associativeTables, mainTable[position][column])
                     forRemoving.addSquare(Square(Position(i0, j0)))
                     forRemoving.addColumn(column)
                     forRemoving.addRow(position)
@@ -149,7 +154,7 @@ class AssociativeTable(
         return isFound
     }
 
-    private fun checkForOneAvailableOptionInRows(): Boolean {
+    private fun checkForOneAvailableOptionInRows(associativeTables: ArrayList<AssociativeTable>): Boolean {
         var isFound = false
         do {
             removeFoundSquaresColumnsRows()
@@ -172,13 +177,14 @@ class AssociativeTable(
                         }
                     }
                     for (k in 0 until size) {
-                        table[position][k] = false
-                        mainTable[position][k].options.remove(id)
+                        table[row][k] = false
+                        mainTable[row][k].options.remove(id)
                         table[k][position] = false
                         mainTable[k][position].options.remove(id)
                     }
                     table[row][position] = true
                     mainTable[row][position].value = id
+                    excludeCellFromOtherAssociativeTables(associativeTables, mainTable[row][position])
                     forRemoving.addSquare(Square(Position(i0, j0)))
                     forRemoving.addColumn(position)
                     forRemoving.addRow(row)
@@ -187,6 +193,13 @@ class AssociativeTable(
             }
         } while (!forRemoving.isEmpty())
         return isFound
+    }
+
+    private fun excludeCellFromOtherAssociativeTables(associativeTables: ArrayList<AssociativeTable>, cell: Cell) {
+        cell.options.forEach { option ->
+            associativeTables[option - 1].table[cell.i][cell.j] = false
+        }
+        cell.options.clear()
     }
 
     private fun removeFoundSquaresColumnsRows() {

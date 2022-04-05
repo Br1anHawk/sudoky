@@ -34,12 +34,15 @@ class Associatives (
     fun check() {
         do {
             checkOnlyOneAvailableOptionInCell()
+            //Sudoky.writeMainTable(mainTable, "singleCell")
             var isFound = false
             associativeTables.forEach {
-                if (it.checkForAvailableOptions()) {
+                if (it.checkForAvailableOptions(associativeTables)) {
                     isFound = true
                 }
+                //Sudoky.writeMainTable(mainTable, "afterAssociativeTable - ${it.id}")
             }
+            //Sudoky.writeMainTable(mainTable, "afterAllAssociativeTables")
         } while (isFound)
     }
 

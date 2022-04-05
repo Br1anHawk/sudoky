@@ -206,4 +206,66 @@ class Sudoky(
 //            cellInSquare.options.remove(cell.value)
 //        }
 //    }
+    companion object {
+        fun writeMainTable(mainTable: ArrayList<ArrayList<Cell>>, tag: String) {
+            val SIZE = mainTable.size
+            val SIDE_OF_SQUARE_SIZE = sqrt(SIZE.toDouble()).toInt()
+            val filePath = "bin\\"
+            val fileName = "debug.html"
+
+            val padding = "20px"
+            val htmlString = StringBuilder()
+            htmlString.append("<html>")
+            htmlString.append("<body>")
+            htmlString.append(tag)
+            htmlString.append("<table style = 'font-size: 60px' border = '1'>")
+            htmlString.append("<tbody>")
+            for (i in mainTable.indices) {
+                if (i % SIDE_OF_SQUARE_SIZE == 0) {
+                    htmlString.append("<tr>")
+                    htmlString.append("<td colspan = '${SIZE + SIDE_OF_SQUARE_SIZE}'>")
+                    htmlString.append("<p style = 'padding-bottom: $padding'>")
+                    htmlString.append("</p>")
+                    htmlString.append("</td>")
+                    htmlString.append("</tr>")
+                }
+                htmlString.append("<tr>")
+                for (j in mainTable[i].indices) {
+                    if (j % SIDE_OF_SQUARE_SIZE == 0) {
+                        htmlString.append("<td>")
+                        htmlString.append("<p style = 'padding-left: $padding'>")
+                        htmlString.append("</p>")
+                        htmlString.append("</td>")
+                    }
+                    htmlString.append("<td>")
+                    if (mainTable[i][j].status == Status.EMPTY) {
+                        htmlString.append("<p style = 'color:red'>")
+                    } else {
+                        htmlString.append("</p>")
+                    }
+                    htmlString.append(mainTable[i][j].value)
+                    if (mainTable[i][j].options.isNotEmpty()) {
+                        htmlString.append("</br>")
+                    }
+                    mainTable[i][j].options.forEach { option ->
+                        htmlString.append(option)
+                    }
+                    htmlString.append("</p>")
+                    htmlString.append("</td>")
+                }
+                htmlString.append("</tr>")
+            }
+            htmlString.append("</tbody>")
+            htmlString.append("</table>")
+            htmlString.append("</body>")
+            htmlString.append("</html>")
+
+            val fileWriter = FileWriter(filePath + fileName)
+            val bufferedWriter = BufferedWriter(fileWriter)
+            bufferedWriter.write(htmlString.toString())
+            bufferedWriter.flush()
+            bufferedWriter.close()
+            fileWriter.close()
+        }
+    }
 }

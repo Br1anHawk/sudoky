@@ -26,6 +26,8 @@ def isIn(rectExt, rectInt):
 def checkTesseractDetectionErrors(numberStr):
     if numberStr == "$)\n":
         numberStr = "5"
+    if numberStr == "74\n":
+        numberStr = "4"
     return numberStr
 
 
