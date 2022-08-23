@@ -18,6 +18,7 @@ dependencies {
     implementation("net.sourceforge.tess4j:tess4j:5.1.1")
     implementation("technology.tabula:tabula:1.0.5")
     implementation("com.github.doyaaaaaken:kotlin-csv-jvm:1.2.0")
+    implementation("commons-net:commons-net:3.8.0")
     //implementation("com.j2html:j2html:1.5.0")
     //testImplementation("org.apache.logging.log4j:log4j-slf4j-impl:2.17.1")
 }

@@ -1,4 +1,9 @@
+import org.apache.commons.net.ftp.FTP
+import org.apache.commons.net.ftp.FTPClient
 import java.awt.FileDialog
+import java.io.File
+import java.io.FileOutputStream
+import javax.imageio.ImageIO
 import javax.swing.JFrame
 
 
@@ -19,7 +24,7 @@ fun main(args: Array<String>) {
     var fileImagePath = ""
     val jFrameContainer = JFrame()
     val fileDialog = FileDialog(jFrameContainer)
-    fileDialog.isVisible = true
+    //fileDialog.isVisible = true
     //val fileImagePath = "Этот компьютер\\POCO M3\\Внутренний общий накопитель\\DCIM\\Screenshots\\Screenshot_2022-04-02-15-45-56-727_easy.sudoku.puzzle.solver.free.jpg"
     val files = fileDialog.files
     if (files.isNotEmpty()) {
@@ -28,7 +33,31 @@ fun main(args: Array<String>) {
     fileDialog.dispose()
     jFrameContainer.dispose()
 
-    val table = DetectSudokuTable.detectFromImage(fileImagePath)
+
+    val screenshotFilesDirectory = "DCIM/Screenshots"
+    val tempFileImage = "bin\\temp\\img.jpg"
+    val hostname = "192.168.0.102"
+    val port = 2121
+    val client = FTPClient()
+    client.connect(hostname, port)
+    val status = client.login("user", "")
+    client.setFileType(FTP.BINARY_FILE_TYPE)
+    val fos = FileOutputStream(tempFileImage)
+    val screenshotFiles = client.listFiles(screenshotFilesDirectory)
+    screenshotFiles.sortBy { it.name }
+    val lastScreenshotFile = screenshotFiles?.get(screenshotFiles.size - 1)
+    val success = client.retrieveFile(screenshotFilesDirectory + "/" + lastScreenshotFile?.name, fos)
+    println("Count of screenshots: " + screenshotFiles.size)
+    println("File name: " + lastScreenshotFile?.name)
+    println("Downloaded: " + success)
+    fos.flush()
+    fos.close()
+    client.logout()
+    client.disconnect()
+
+
+    val table = DetectSudokuTable.detectFromImage(tempFileImage)
+    //val table = DetectSudokuTable.detectFromImage(fileImagePath)
     val sudoky = Sudoky(table)
     sudoky.resolve()
     sudoky.writeSolutionTableToHtmlFile(fileSolutionHtmlPath, fileSolutionHtmlName)

@@ -4,7 +4,7 @@ import pytesseract
 import csv
 import sys
 
-filePath = r'S:\programming\st.jpg'
+filePath = r'S:\programming\sudokyImages\testNew.jpg'
 tesseractCmdPath = r'C:\Program Files (x86)\Tesseract-OCR\tesseract.exe'
 csvFilePath = r''
 csvFileName = "csv.csv"
@@ -101,7 +101,7 @@ def sudokuTableImageToCsv(script, fileImagePath, tesseractCmdPath=tesseractCmdPa
     imageForEdit = cv2.imread(fileImagePath)
     image = cv2.imread(fileImagePath, 0)
     img = np.array(image)
-    thresh, img_bin = cv2.threshold(img, 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
+    thresh, img_bin = cv2.threshold(img, 197, 255, cv2.THRESH_BINARY)
     img_bin = 255 - img_bin
     kernel_len = np.array(img).shape[1] // 50
     ver_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (1, kernel_len))
@@ -113,7 +113,7 @@ def sudokuTableImageToCsv(script, fileImagePath, tesseractCmdPath=tesseractCmdPa
     horizontal_lines = cv2.dilate(image_2, hor_kernel, iterations=3)
     img_vh = cv2.addWeighted(vertical_lines, 0.5, horizontal_lines, 0.5, 0.0)
     img_vh = cv2.erode(~img_vh, kernel, iterations=2)
-    _, img_vh = cv2.threshold(img_vh, 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
+    _, img_vh = cv2.threshold(img_vh, 197, 255, cv2.THRESH_BINARY)
     dilated_value = cv2.dilate(img_vh, kernel, iterations=1)
     contours, hierarchy = cv2.findContours(dilated_value, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     mainRectangle = Rect(0, 0, img.shape[1], img.shape[0])
