@@ -78,8 +78,16 @@ class Sudoky(
     fun writeSolutionTableToHtmlFile(filePath: String, fileName: String) {
         val padding = "20px"
         val htmlString = StringBuilder()
+        val delay = 1000
         htmlString.append("<html>")
         htmlString.append("<body>")
+        htmlString.append("<script src=\"speech.js\"></script> ")
+        htmlString.append("<script>")
+        for (digit in getTextForSpeech()) {
+            htmlString.append("setTimeout(()=>{speak($digit)}, $delay);")
+        }
+        //htmlString.append("speak(\"" + getTextForSpeech() + "\");")
+        htmlString.append("</script>")
         htmlString.append("<table style = 'font-size: 60px' border = '0'>")
         htmlString.append("<tbody>")
         for (i in mainTable.indices) {
@@ -120,6 +128,19 @@ class Sudoky(
         bufferedWriter.write(htmlString.toString())
         bufferedWriter.flush()
         bufferedWriter.close()
+    }
+
+    fun getTextForSpeech():String {
+        var textForSpeech = ""
+        for (i in mainTable.indices) {
+            for (j in mainTable[i].indices) {
+                if (mainTable[i][j].status == Status.EMPTY) {
+                    textForSpeech += mainTable[i][j].value
+                    //textForSpeech += " "
+                }
+            }
+        }
+        return textForSpeech
     }
 
     fun printMainTableInConsole() {

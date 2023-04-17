@@ -4,7 +4,7 @@ import pytesseract
 import csv
 import sys
 
-filePath = r'S:\programming\sudokyImages\testNew.jpg'
+filePath = r'C:\Users\binif\IdeaProjects\sudoky\bin\temp\img.jpg'
 tesseractCmdPath = r'C:\Program Files (x86)\Tesseract-OCR\tesseract.exe'
 csvFilePath = r''
 csvFileName = "csv.csv"
@@ -60,7 +60,9 @@ def traversalTreeOfRectangles(rectangle, table, imageForEdit):
             thr = 255 - cv2.bitwise_and(dlt, msk)
 
             custom_oem_psm_config = r' --psm 10 -l rus'
+            #custom_oem_psm_config = 'digits'
             numberStr = pytesseract.image_to_string(thr, config=custom_oem_psm_config)
+            print(numberStr)
             numberStr = checkTesseractDetectionErrors(numberStr)
             try:
                 number = int(numberStr)
@@ -138,5 +140,5 @@ def sudokuTableImageToCsv(script, fileImagePath, tesseractCmdPath=tesseractCmdPa
 
 
 if __name__ == '__main__':
-    # sudokuTableImageToCsv(r'sudokuTableImageToCsv.py', filePath)
+    #sudokuTableImageToCsv(r'sudokuTableImageToCsv.py', filePath)
     sudokuTableImageToCsv(*sys.argv)

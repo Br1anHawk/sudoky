@@ -1,9 +1,9 @@
 import org.apache.commons.net.ftp.FTP
 import org.apache.commons.net.ftp.FTPClient
 import java.awt.FileDialog
-import java.io.File
 import java.io.FileOutputStream
-import javax.imageio.ImageIO
+import java.net.ConnectException
+import java.net.SocketException
 import javax.swing.JFrame
 
 
@@ -36,24 +36,29 @@ fun main(args: Array<String>) {
 
     val screenshotFilesDirectory = "DCIM/Screenshots"
     val tempFileImage = "bin\\temp\\img.jpg"
-    val hostname = "192.168.0.102"
+    val hostname = "192.168.0.100"
     val port = 2121
     val client = FTPClient()
-    client.connect(hostname, port)
-    val status = client.login("user", "")
-    client.setFileType(FTP.BINARY_FILE_TYPE)
     val fos = FileOutputStream(tempFileImage)
-    val screenshotFiles = client.listFiles(screenshotFilesDirectory)
-    screenshotFiles.sortBy { it.name }
-    val lastScreenshotFile = screenshotFiles?.get(screenshotFiles.size - 1)
-    val success = client.retrieveFile(screenshotFilesDirectory + "/" + lastScreenshotFile?.name, fos)
-    println("Count of screenshots: " + screenshotFiles.size)
-    println("File name: " + lastScreenshotFile?.name)
-    println("Downloaded: " + success)
-    fos.flush()
-    fos.close()
-    client.logout()
-    client.disconnect()
+    try {
+        //client.connectTimeout = 5000
+        client.connect(hostname, port)
+        val status = client.login("user", "")
+        client.setFileType(FTP.BINARY_FILE_TYPE)
+        val screenshotFiles = client.listFiles(screenshotFilesDirectory)
+        screenshotFiles.sortBy { it.name }
+        val lastScreenshotFile = screenshotFiles?.get(screenshotFiles.size - 1)
+        val success = client.retrieveFile(screenshotFilesDirectory + "/" + lastScreenshotFile?.name, fos)
+        //println("Count of screenshots: " + screenshotFiles.size)
+        //println("File name: " + lastScreenshotFile?.name)
+        //println("Downloaded: " + success)
+        fos.flush()
+        fos.close()
+        client.logout()
+        client.disconnect()
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
 
 
     val table = DetectSudokuTable.detectFromImage(tempFileImage)
