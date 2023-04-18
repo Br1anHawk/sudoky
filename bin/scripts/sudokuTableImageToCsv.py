@@ -144,5 +144,5 @@ def sudokuTableImageToCsv(script, fileImagePath, tesseractCmdPath=tesseractCmdPa
 
 
 if __name__ == '__main__':
-    sudokuTableImageToCsv(r'sudokuTableImageToCsv.py', filePath)
-    #sudokuTableImageToCsv(*sys.argv)
+    #sudokuTableImageToCsv(r'sudokuTableImageToCsv.py', filePath)
+    sudokuTableImageToCsv(*sys.argv)
