@@ -24,10 +24,14 @@ def isIn(rectExt, rectInt):
 
 
 def checkTesseractDetectionErrors(numberStr):
-    if numberStr == "$)\n":
+    if numberStr == "2)\n" or numberStr == "<)\n" or numberStr == "{)\n":
         numberStr = "5"
     if numberStr == "74\n":
         numberStr = "4"
+    if numberStr == "®\n" or numberStr == "©\n":
+        numberStr = "9"
+    if numberStr == "у\n":
+        numberStr = "7"
     return numberStr
 
 
@@ -140,5 +144,5 @@ def sudokuTableImageToCsv(script, fileImagePath, tesseractCmdPath=tesseractCmdPa
 
 
 if __name__ == '__main__':
-    #sudokuTableImageToCsv(r'sudokuTableImageToCsv.py', filePath)
-    sudokuTableImageToCsv(*sys.argv)
+    sudokuTableImageToCsv(r'sudokuTableImageToCsv.py', filePath)
+    #sudokuTableImageToCsv(*sys.argv)

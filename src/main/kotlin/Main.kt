@@ -36,7 +36,7 @@ fun main(args: Array<String>) {
 
     val screenshotFilesDirectory = "DCIM/Screenshots"
     val tempFileImage = "bin\\temp\\img.jpg"
-    val hostname = "192.168.0.100"
+    val hostname = "192.168.0.103"
     val port = 2121
     val client = FTPClient()
     val fos = FileOutputStream(tempFileImage)
