@@ -33,7 +33,7 @@ def checkTesseractDetectionErrors(numberStr):
         numberStr = "9"
     if numberStr == "у\n":
         numberStr = "7"
-    if numberStr == "0\n":
+    if numberStr == "О\n":
         numberStr = "6"
     return numberStr
 
