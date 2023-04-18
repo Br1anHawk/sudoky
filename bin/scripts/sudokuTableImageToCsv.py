@@ -8,6 +8,7 @@ filePath = r'C:\Users\binif\IdeaProjects\sudoky\bin\temp\img.jpg'
 tesseractCmdPath = r'C:\Program Files (x86)\Tesseract-OCR\tesseract.exe'
 csvFilePath = r''
 csvFileName = "csv.csv"
+debugTesseractNumbersFileName = "debugNumbers.csv"
 TABLE_WIDTH_SIZE = 9
 TABLE_HEIGHT_SIZE = 9
 
@@ -32,6 +33,8 @@ def checkTesseractDetectionErrors(numberStr):
         numberStr = "9"
     if numberStr == "у\n":
         numberStr = "7"
+    if numberStr == "0\n":
+        numberStr = "6"
     return numberStr
 
 
@@ -51,6 +54,7 @@ def traversalTreeOfRectangles(rectangle, table, imageForEdit):
         return
     m = len(table)
     n = len(table[0])
+    debugNumbersTesseractTable = getTable(m, n)
     if len(cells) == m * n:
         i = m - 1
         j = n - 1
@@ -66,6 +70,7 @@ def traversalTreeOfRectangles(rectangle, table, imageForEdit):
             custom_oem_psm_config = r' --psm 10 -l rus'
             #custom_oem_psm_config = 'digits'
             numberStr = pytesseract.image_to_string(thr, config=custom_oem_psm_config)
+            debugNumbersTesseractTable[i][j] = numberStr
             print(numberStr)
             numberStr = checkTesseractDetectionErrors(numberStr)
             try:
@@ -82,6 +87,7 @@ def traversalTreeOfRectangles(rectangle, table, imageForEdit):
                 i -= 1
     for cell in cells:
         traversalTreeOfRectangles(cell, table, imageForEdit)
+    csv.writer(open(csvFilePath + debugTesseractNumbersFileName, 'w', newline='')).writerows(debugNumbersTesseractTable)
 
 
 def writeTableInCsvFile(csvFilePath, csvFileName, table):
