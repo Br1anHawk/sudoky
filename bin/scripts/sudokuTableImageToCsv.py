@@ -56,6 +56,7 @@ def traversalTreeOfRectangles(rectangle, table, imageForEdit):
     n = len(table[0])
     debugNumbersTesseractTable = getTable(m, n)
     if len(cells) == m * n:
+
         i = m - 1
         j = n - 1
         for cell in rectangle.cells:
@@ -85,9 +86,10 @@ def traversalTreeOfRectangles(rectangle, table, imageForEdit):
             if j == -1:
                 j = n - 1
                 i -= 1
+    csv.writer(open(csvFilePath + debugTesseractNumbersFileName, 'w', newline='')).writerows(debugNumbersTesseractTable)
     for cell in cells:
         traversalTreeOfRectangles(cell, table, imageForEdit)
-    csv.writer(open(csvFilePath + debugTesseractNumbersFileName, 'w', newline='')).writerows(debugNumbersTesseractTable)
+
 
 
 def writeTableInCsvFile(csvFilePath, csvFileName, table):
@@ -115,7 +117,7 @@ def sudokuTableImageToCsv(script, fileImagePath, tesseractCmdPath=tesseractCmdPa
     img = np.array(image)
     thresh, img_bin = cv2.threshold(img, 197, 255, cv2.THRESH_BINARY)
     img_bin = 255 - img_bin
-    kernel_len = np.array(img).shape[1] // 50
+    kernel_len = np.array(img).shape[1] // 200
     ver_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (1, kernel_len))
     hor_kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (kernel_len, 1))
     kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (7, 7))
@@ -131,16 +133,17 @@ def sudokuTableImageToCsv(script, fileImagePath, tesseractCmdPath=tesseractCmdPa
     mainRectangle = Rect(0, 0, img.shape[1], img.shape[0])
     for cnt in contours:
         x, y, w, h = cv2.boundingRect(cnt)
-        if abs(w - h) < 5:
+        if abs(w - h) < 4:
             cv2.rectangle(imageForEdit, (x, y), (x + w, y + h), (0, 0, 255), 1)
             rectInt = Rect(x, y, w, h)
-            if len(mainRectangle.cells) > 0:
-                if isIn(mainRectangle.cells[len(mainRectangle.cells) - 1], rectInt):
-                    mainRectangle.cells[len(mainRectangle.cells) - 1].cells.append(rectInt)
-                else:
-                    mainRectangle.cells.append(rectInt)
-            else:
-                mainRectangle.cells.append(rectInt)
+            addRect(mainRectangle, rectInt)
+            # if len(mainRectangle.cells) > 0:
+            #     if isIn(mainRectangle.cells[len(mainRectangle.cells) - 1], rectInt):
+            #         mainRectangle.cells[len(mainRectangle.cells) - 1].cells.append(rectInt)
+            #     else:
+            #         mainRectangle.cells.append(rectInt)
+            # else:
+            #     mainRectangle.cells.append(rectInt)
     table = getTable(TABLE_WIDTH_SIZE, TABLE_HEIGHT_SIZE)
     traversalTreeOfRectangles(mainRectangle, table, imageForEdit)
 
@@ -148,6 +151,19 @@ def sudokuTableImageToCsv(script, fileImagePath, tesseractCmdPath=tesseractCmdPa
     cv2.namedWindow('detecttable', cv2.WINDOW_NORMAL)
     cv2.imwrite(csvFilePath + "detecttable.jpg", imageForEdit)
 
+
+def addRect(mainRectangle: Rect, rectangle):
+    if (isIn(mainRectangle, rectangle)):
+        isAdded = False
+        for rect in mainRectangle.cells:
+            isAdded = addRect(rect, rectangle)
+        if (isAdded):
+            return True
+        else:
+            mainRectangle.cells.append(rectangle)
+            return True
+    else:
+        return False
 
 if __name__ == '__main__':
     #sudokuTableImageToCsv(r'sudokuTableImageToCsv.py', filePath)
