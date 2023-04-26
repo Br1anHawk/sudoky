@@ -59,10 +59,23 @@ class AssociativeTable(
             //Sudoky.writeMainTable(mainTable, "columns")
             val isFoundAvailableOptionsInRows = checkForOneAvailableOptionInRows(associativeTables)
             //Sudoky.writeMainTable(mainTable, "rows")
-            if (isFoundAvailableOptionsInSquares || isFoundAvailableOptionsInColumns || isFoundAvailableOptionsInRows) {
+            val isFoundPointingPairsInRows = checkForPointingPairsInRows()
+            val isFoundPointingPairsInColumns = checkForPointingPairsInColumns()
+            val isFoundPointingPairsInSquares = checkForPointingPairsInSquares()
+            if (isFoundAvailableOptionsInSquares
+                || isFoundAvailableOptionsInColumns
+                || isFoundAvailableOptionsInRows
+                || isFoundPointingPairsInRows
+                || isFoundPointingPairsInColumns
+                || isFoundPointingPairsInSquares) {
                 isFound = true
             }
-        } while (isFoundAvailableOptionsInSquares || isFoundAvailableOptionsInColumns || isFoundAvailableOptionsInRows)
+        } while (isFoundAvailableOptionsInSquares
+            || isFoundAvailableOptionsInColumns
+            || isFoundAvailableOptionsInRows
+            || isFoundPointingPairsInRows
+            || isFoundPointingPairsInColumns
+            || isFoundPointingPairsInSquares)
         return isFound
     }
 
@@ -194,6 +207,77 @@ class AssociativeTable(
         } while (!forRemoving.isEmpty())
         return isFound
     }
+
+
+
+    private fun checkForPointingPairsInRows(): Boolean {
+        //return false
+        var isFound = false
+        for (row in availableRowsForChecking) {
+            val foundColumns = arrayListOf<Int>()
+            for (j in 0 until size) {
+                if (table[row][j]) {
+                    foundColumns.add(j)
+                }
+            }
+            if (isInSameSquare(foundColumns)) {
+                val i0 = row - row % sideOfSquareSize
+                val j0 = foundColumns[0] - foundColumns[0] % sideOfSquareSize
+                for (i in 0 until sideOfSquareSize) {
+                    if (i0 + i == row) continue
+                     for (j in 0 until sideOfSquareSize) {
+                        if (table[i0 + i][j0 + j]) isFound = true
+                        table[i0 + i][j0 + j] = false
+                        mainTable[i0 + i][j0 + j].options.remove(id)
+                    }
+                }
+            }
+        }
+        return isFound
+    }
+    private fun checkForPointingPairsInColumns(): Boolean {
+        //return false
+        var isFound = false
+        for (column in availableColumnsForChecking) {
+            val foundRows = arrayListOf<Int>()
+            for (i in 0 until size) {
+                if (table[i][column]) {
+                    foundRows.add(i)
+                }
+            }
+            if (isInSameSquare(foundRows)) {
+                val i0 = foundRows[0] - foundRows[0] % sideOfSquareSize
+                val j0 = column - column % sideOfSquareSize
+                for (j in 0 until sideOfSquareSize) {
+                    if (j0 + j == column) continue
+                    for (i in 0 until sideOfSquareSize) {
+                        if (table[i0 + i][j0 + j]) isFound = true
+                        table[i0 + i][j0 + j] = false
+                        mainTable[i0 + i][j0 + j].options.remove(id)
+                    }
+                }
+            }
+        }
+        return isFound
+    }
+    private fun isInSameSquare(array: ArrayList<Int>): Boolean {
+        var isIn = false
+        if (array.isEmpty() || array.size == 1) return isIn
+        val posFirst = array[0] / sideOfSquareSize
+        array.forEach {
+            if (it / sideOfSquareSize != posFirst) return isIn
+        }
+        isIn = true
+        return isIn
+    }
+    private fun checkForPointingPairsInSquares(): Boolean {
+        var isFound = false
+        for (square in availableSquaresForChecking) {
+
+        }
+        return isFound
+    }
+
 
     private fun excludeCellFromOtherAssociativeTables(associativeTables: ArrayList<AssociativeTable>, cell: Cell) {
         cell.options.forEach { option ->
